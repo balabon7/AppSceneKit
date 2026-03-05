@@ -5,6 +5,7 @@
 // 4-5 зірок → Apple prompt. 1-3 зірки → feedback URL.
 
 import UIKit
+import PaywallKit
 
 // MARK: - RatingPromptViewController
 
