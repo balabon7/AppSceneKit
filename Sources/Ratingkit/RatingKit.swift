@@ -6,7 +6,6 @@
 
 import UIKit
 import StoreKit
-import RatingKit
 
 // MARK: - RatingKit
 
