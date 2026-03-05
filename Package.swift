@@ -7,10 +7,9 @@ let package = Package(
         .iOS(.v15)
     ],
     products: [
-        .library(name: "AppSceneKit",    targets: ["AppSceneKit"]),
-        .library(name: "OnboardingKit",  targets: ["OnboardingKit"]),
-        .library(name: "PaywallKit",     targets: ["PaywallKit"]),
-        .library(name: "RatingKit",      targets: ["RatingKit"]),
+        .library(name: "OnboardingKit", targets: ["OnboardingKit"]),
+        .library(name: "PaywallKit",    targets: ["PaywallKit"]),
+        .library(name: "RatingKit",     targets: ["RatingKit"]),
     ],
     dependencies: [
         .package(url: "https://github.com/adaptyteam/AdaptySDK-iOS", from: "3.0.0")
