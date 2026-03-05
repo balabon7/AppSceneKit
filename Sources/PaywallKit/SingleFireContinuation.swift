@@ -16,7 +16,7 @@ import Foundation
 /// (наприклад `didFinishPurchase` і `didFailPurchase`).
 /// Без захисту — crash або undefined behavior.
 @MainActor
-final class SingleFireContinuation<T> {
+public final class SingleFireContinuation<T> {
 
     private var continuation: CheckedContinuation<T, Never>?
     nonisolated(unsafe) private var isConsumed = false
@@ -26,7 +26,7 @@ final class SingleFireContinuation<T> {
     }
 
     /// Передає результат у continuation. Повторні виклики ігноруються.
-    func resume(with value: T) {
+    public func resume(with value: T) {
         guard !isConsumed else { return }
         isConsumed = true
         continuation?.resume(returning: value)
