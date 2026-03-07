@@ -13,14 +13,24 @@ import UIKit
 /// ```swift
 /// // AppDelegate
 /// OnboardingKit.configure(
-///     configuration: .init(),
-///     primaryProvider: AdaptyOnboardingProvider(permissionHandler: MyPermissions()),
+///     configuration: .init(fetchTimeout: 10, displayTimeout: 15),
+///     primaryProvider: AdaptyOnboardingProvider(
+///         fetchTimeout: 10,    // ← має збігатись з configuration.fetchTimeout
+///         displayTimeout: 15   // ← має збігатись з configuration.displayTimeout
+///     ),
 ///     fallbackUI: MyOnboardingViewController.self
 /// )
 ///
 /// // Де завгодно
 /// let result = await OnboardingKit.shared.show(placementId: "main", from: self)
 /// ```
+///
+/// > **Важливо щодо таймаутів:**
+/// > `OnboardingKitConfiguration.fetchTimeout` / `displayTimeout` використовуються
+/// > для логування та документування наміру. Реальні таймаути контролює провайдер
+/// > (наприклад `AdaptyOnboardingProvider.init(fetchTimeout:displayTimeout:)`).
+/// > Переконайся що значення збігаються — SDK не може передати їх автоматично,
+/// > бо провайдер вже створений до виклику `configure()`.
 @MainActor
 public final class OnboardingKit {
 
@@ -107,6 +117,14 @@ public final class OnboardingKit {
             return .failed(.notConfigured)
         }
 
+        // FIX #1: `force` раніше був оголошений але ніколи не використовувався.
+        // Якщо юзер вже пройшов онбординг і force == false — повертаємо .skipped
+        // без показу будь-якого UI. Саме ця перевірка і є головною метою `hasCompleted`.
+        guard force || !hasCompleted else {
+            log("Already completed — skipping. Use force: true to override.", level: .debug)
+            return .skipped
+        }
+
         // Перевіряємо мережу — якщо нема, одразу fallback
         let cfg = configuration!
         let hasNetwork: Bool
@@ -166,11 +184,16 @@ public final class OnboardingKit {
         case .completed:
             log("✅ Onboarding completed.", level: .info)
             eventHandler?.onOnboardingCompleted(placementId: placementId)
+            // FIX #2: Notification тепер надсилається і для .completed, і для .skipped.
+            // Коментар у Notification.Name казав "після .completed або .skipped",
+            // але .skipped раніше нотифікацію не надсилав — слухачі ніколи не дізнавались.
             NotificationCenter.default.post(name: .onboardingKitCompleted, object: nil)
 
         case .skipped:
             log("↩️ Onboarding skipped.", level: .info)
             eventHandler?.onOnboardingSkipped(placementId: placementId)
+            // FIX #2: додано — симетрично до .completed.
+            NotificationCenter.default.post(name: .onboardingKitCompleted, object: nil)
 
         case .failed(let error):
             log("❌ \(error.localizedDescription)", level: .error)
@@ -193,5 +216,16 @@ public final class OnboardingKit {
 
 public extension Notification.Name {
     /// Надсилається після .completed або .skipped.
+    /// Слухай цю нотифікацію щоб дізнатись що онбординг завершено в будь-якому сценарії.
+    ///
+    /// ```swift
+    /// NotificationCenter.default.addObserver(
+    ///     forName: .onboardingKitCompleted,
+    ///     object: nil,
+    ///     queue: .main
+    /// ) { _ in
+    ///     // Переходимо на головний екран
+    /// }
+    /// ```
     static let onboardingKitCompleted = Notification.Name("OnboardingKit.completed")
 }

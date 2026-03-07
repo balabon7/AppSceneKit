@@ -10,15 +10,32 @@ import UIKit
 
 final class DefaultPaywallAdapter: UIViewController, PaywallKitUI, UIAdaptivePresentationControllerDelegate, UISheetPresentationControllerDelegate {
 
+    // MARK: - Static Configuration
+    //
+    // Встанови перед показом paywall — зазвичай в AppDelegate або PaywallKit.configure().
+    //
+    // Приклад:
+    //   DefaultPaywallAdapter.privacyURL = URL(string: "https://yourapp.com/privacy")
+    //   DefaultPaywallAdapter.termsURL   = URL(string: "https://yourapp.com/terms")
+
+    /// URL Privacy Policy. Якщо `nil` — кнопка неактивна (але видима).
+    public static var privacyURL: URL? = nil
+
+    /// URL Terms of Use. За замовчуванням — стандартна Apple EULA.
+    public static var termsURL: URL? = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")
+
     // MARK: - PaywallKitUI
 
+    // FIX #1: Додано @MainActor — вимагається протоколом PaywallKitUI.
+    // Без нього Swift 6 strict concurrency видає compile error.
+    @MainActor
     static func make(context: PaywallUIContext) -> UIViewController {
         let vc = DefaultPaywallAdapter()
         vc.context = context
-        
+
         // Повноекранний режим для onboarding/launch
         vc.modalPresentationStyle = .fullScreen
-        
+
         // Для pageSheet/formSheet режиму розкоментуйте:
         // vc.modalPresentationStyle = .pageSheet
         // if #available(iOS 15.0, *) {
@@ -30,7 +47,7 @@ final class DefaultPaywallAdapter: UIViewController, PaywallKitUI, UIAdaptivePre
         // } else {
         //     vc.presentationController?.delegate = vc
         // }
-        
+
         return vc
     }
 
@@ -40,7 +57,7 @@ final class DefaultPaywallAdapter: UIViewController, PaywallKitUI, UIAdaptivePre
     private var selectedProduct: PaywallProduct?
     private var planButtons: [PlanButton] = []
     private var didClose = false  // Запобігаємо подвійному виклику close()
-    
+
     // Акцентний колір (з context)
     private var accentColor: UIColor { context.accentColor }
 
@@ -153,7 +170,7 @@ final class DefaultPaywallAdapter: UIViewController, PaywallKitUI, UIAdaptivePre
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        
+
         // Якщо view controller закривається (свайп вниз або інший спосіб)
         // і ми ще не викликали close(), викликаємо його зараз
         if isBeingDismissed && !didClose {
@@ -243,7 +260,13 @@ final class DefaultPaywallAdapter: UIViewController, PaywallKitUI, UIAdaptivePre
 
     private func select(_ product: PaywallProduct) {
         selectedProduct = product
-        planButtons.forEach { $0.setSelected($0.tag == context.products.firstIndex(where: { $0.id == product.id }) ?? -1) }
+
+        // FIX #2: Дужки навколо `firstIndex(...) ?? -1` виправляють operator precedence.
+        // Без дужок Swift парсить як `(tag == firstIndex(...)) ?? -1`,
+        // тобто `Bool ?? Int` — compile error.
+        planButtons.forEach {
+            $0.setSelected($0.tag == (context.products.firstIndex(where: { $0.id == product.id }) ?? -1))
+        }
 
         // Оновлюємо CTA кнопку
         let title = product.introductoryOffer != nil
@@ -312,20 +335,21 @@ final class DefaultPaywallAdapter: UIViewController, PaywallKitUI, UIAdaptivePre
         context.close()
     }
 
+    // FIX #3: URL більше не зашиті в SDK.
+    // Встановлюй DefaultPaywallAdapter.termsURL / .privacyURL в AppDelegate.
+    // Якщо URL не встановлено — нічого не відбувається (безпечний fallback).
+
     @objc private func termsTapped() {
-        openURL("https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")
+        guard let url = DefaultPaywallAdapter.termsURL else { return }
+        UIApplication.shared.open(url)
     }
 
     @objc private func privacyTapped() {
-        openURL("https://telegra.ph/Privacy-Policy--PDF-Scanner-Scan--Sign-Doc-03-05")
+        guard let url = DefaultPaywallAdapter.privacyURL else { return }
+        UIApplication.shared.open(url)
     }
 
     // MARK: - Helpers
-
-    private func openURL(_ string: String) {
-        guard let url = URL(string: string) else { return }
-        UIApplication.shared.open(url)
-    }
 
     private func makeTextButton(_ title: String, action: Selector) -> UIButton {
         let b = UIButton(type: .system)
@@ -395,7 +419,7 @@ private final class PlanButton: UIControl {
         return iv
     }()
 
-    // "MOST POPULAR" badge — показується тільки для isPopular
+    // "BEST VALUE" badge — показується тільки для isPopular
     private lazy var popularBadge: PaddedLabel = {
         let l = PaddedLabel()
         l.text = "BEST VALUE"
@@ -450,7 +474,7 @@ private final class PlanButton: UIControl {
         container.addSubview(row)
 
         NSLayoutConstraint.activate([
-            container.topAnchor.constraint(equalTo: topAnchor, constant: 6),  // залишаємо місце для badge
+            container.topAnchor.constraint(equalTo: topAnchor, constant: 6),  // місце для badge
             container.leadingAnchor.constraint(equalTo: leadingAnchor),
             container.trailingAnchor.constraint(equalTo: trailingAnchor),
             container.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -491,19 +515,19 @@ private final class PlanButton: UIControl {
     func setSelected(_ selected: Bool) {
         isSelectedState = selected
 
-        UIView.animate(withDuration: 0.2, delay: 0.2, options: .curveEaseInOut) {
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut) {
             if selected {
                 self.container.backgroundColor = self.accentColor.withAlphaComponent(0.07)
                 self.container.layer.borderColor = self.accentColor.cgColor
                 self.nameLabel.textColor = .label
                 self.priceLabel.textColor = self.accentColor
-                self.checkmark.alpha = 1  // Показуємо галочку
+                self.checkmark.alpha = 1
             } else {
                 self.container.backgroundColor = .secondarySystemBackground
                 self.container.layer.borderColor = UIColor.clear.cgColor
                 self.nameLabel.textColor = .label
                 self.priceLabel.textColor = .secondaryLabel
-                self.checkmark.alpha = 0  // Ховаємо галочку, але місце залишається
+                self.checkmark.alpha = 0
             }
         }
     }
@@ -548,6 +572,7 @@ private final class PaddedLabel: UILabel {
         )
     }
 }
+
 // MARK: - SubscriptionPeriod Extension
 
 private extension SubscriptionPeriod {
@@ -562,4 +587,3 @@ private extension SubscriptionPeriod {
         }
     }
 }
-

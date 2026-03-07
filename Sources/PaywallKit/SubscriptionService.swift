@@ -73,10 +73,7 @@ extension SubscriptionService: ProfileApplicable {
     func apply(profile: AdaptyProfile) {
         cachedProfile = profile
         
-        // Оновлюємо UserPreferences
         let isPremium = profile.accessLevels["premium"]?.isActive == true
-        UserPreferences.shared.isPremiumUser = isPremium
-        
         print("[SubscriptionService] Profile applied. Premium: \(isPremium)")
     }
 }
