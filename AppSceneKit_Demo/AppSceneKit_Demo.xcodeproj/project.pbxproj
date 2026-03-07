@@ -6,6 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5DEA60522F5C4479007A9D13 /* OnboardingKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5DEA60512F5C4479007A9D13 /* OnboardingKit */; };
+		5DEA60542F5C4479007A9D13 /* PaywallKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5DEA60532F5C4479007A9D13 /* PaywallKit */; };
+		5DEA60562F5C4479007A9D13 /* RatingKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5DEA60552F5C4479007A9D13 /* RatingKit */; };
+		5DEA60592F5C4544007A9D13 /* Adapty in Frameworks */ = {isa = PBXBuildFile; productRef = 5DEA60582F5C4544007A9D13 /* Adapty */; };
+		5DEA605B2F5C4544007A9D13 /* AdaptyUI in Frameworks */ = {isa = PBXBuildFile; productRef = 5DEA605A2F5C4544007A9D13 /* AdaptyUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		5DEA60282F5C3FAB007A9D13 /* AppSceneKit_Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppSceneKit_Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +44,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5DEA60542F5C4479007A9D13 /* PaywallKit in Frameworks */,
+				5DEA60592F5C4544007A9D13 /* Adapty in Frameworks */,
+				5DEA60522F5C4479007A9D13 /* OnboardingKit in Frameworks */,
+				5DEA60562F5C4479007A9D13 /* RatingKit in Frameworks */,
+				5DEA605B2F5C4544007A9D13 /* AdaptyUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +91,11 @@
 			);
 			name = AppSceneKit_Demo;
 			packageProductDependencies = (
+				5DEA60512F5C4479007A9D13 /* OnboardingKit */,
+				5DEA60532F5C4479007A9D13 /* PaywallKit */,
+				5DEA60552F5C4479007A9D13 /* RatingKit */,
+				5DEA60582F5C4544007A9D13 /* Adapty */,
+				5DEA605A2F5C4544007A9D13 /* AdaptyUI */,
 			);
 			productName = AppSceneKit_Demo;
 			productReference = 5DEA60282F5C3FAB007A9D13 /* AppSceneKit_Demo.app */;
@@ -107,6 +125,10 @@
 			);
 			mainGroup = 5DEA601F2F5C3FAA007A9D13;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				5DEA60502F5C4479007A9D13 /* XCLocalSwiftPackageReference "../../AppSceneKit" */,
+				5DEA60572F5C4544007A9D13 /* XCRemoteSwiftPackageReference "AdaptySDK-iOS" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5DEA60292F5C3FAB007A9D13 /* Products */;
 			projectDirPath = "";
@@ -345,6 +367,49 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		5DEA60502F5C4479007A9D13 /* XCLocalSwiftPackageReference "../../AppSceneKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../AppSceneKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5DEA60572F5C4544007A9D13 /* XCRemoteSwiftPackageReference "AdaptySDK-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/adaptyteam/AdaptySDK-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.15.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5DEA60512F5C4479007A9D13 /* OnboardingKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OnboardingKit;
+		};
+		5DEA60532F5C4479007A9D13 /* PaywallKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PaywallKit;
+		};
+		5DEA60552F5C4479007A9D13 /* RatingKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RatingKit;
+		};
+		5DEA60582F5C4544007A9D13 /* Adapty */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5DEA60572F5C4544007A9D13 /* XCRemoteSwiftPackageReference "AdaptySDK-iOS" */;
+			productName = Adapty;
+		};
+		5DEA605A2F5C4544007A9D13 /* AdaptyUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5DEA60572F5C4544007A9D13 /* XCRemoteSwiftPackageReference "AdaptySDK-iOS" */;
+			productName = AdaptyUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5DEA60202F5C3FAA007A9D13 /* Project object */;
 }

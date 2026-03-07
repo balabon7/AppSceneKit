@@ -14,7 +14,7 @@ import UIKit
 /// // AppDelegate
 /// OnboardingKit.configure(
 ///     configuration: .init(fetchTimeout: 10, displayTimeout: 15),
-///     primaryProvider: AdaptyOnboardingProvider(
+///     primaryProvider: AFAdaptyOnboardingProvider(
 ///         fetchTimeout: 10,    // ← має збігатись з configuration.fetchTimeout
 ///         displayTimeout: 15   // ← має збігатись з configuration.displayTimeout
 ///     ),
@@ -28,7 +28,7 @@ import UIKit
 /// > **Важливо щодо таймаутів:**
 /// > `OnboardingKitConfiguration.fetchTimeout` / `displayTimeout` використовуються
 /// > для логування та документування наміру. Реальні таймаути контролює провайдер
-/// > (наприклад `AdaptyOnboardingProvider.init(fetchTimeout:displayTimeout:)`).
+/// > (наприклад `AFAdaptyOnboardingProvider.init(fetchTimeout:displayTimeout:)`).
 /// > Переконайся що значення збігаються — SDK не може передати їх автоматично,
 /// > бо провайдер вже створений до виклику `configure()`.
 @MainActor
@@ -79,7 +79,7 @@ public final class OnboardingKit {
     ///
     /// ```swift
     /// OnboardingKit.configure(
-    ///     primaryProvider: AdaptyOnboardingProvider(),
+    ///     primaryProvider: AFAdaptyOnboardingProvider(),
     ///     fallbackUI: MyOnboardingViewController.self
     /// )
     /// ```

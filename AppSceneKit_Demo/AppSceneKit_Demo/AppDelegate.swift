@@ -6,6 +6,9 @@
 //
 
 import UIKit
+import OnboardingKit
+import PaywallKit
+import RatingKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {

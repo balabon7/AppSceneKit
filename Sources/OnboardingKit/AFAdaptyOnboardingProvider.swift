@@ -1,4 +1,4 @@
-// AdaptyOnboardingProvider.swift
+// AFAdaptyOnboardingProvider.swift
 // AppSceneKit SDK
 //
 // Реалізація OnboardingProvider для Adapty Onboarding SDK.
@@ -8,7 +8,7 @@ import UIKit
 import Adapty
 import AdaptyUI
 
-// MARK: - AdaptyOnboardingProvider
+// MARK: - AFAdaptyOnboardingProvider
 
 /// Провайдер онбордингу на базі Adapty.
 /// Конформить до `OnboardingProvider` — повністю замінний.
@@ -19,7 +19,7 @@ import AdaptyUI
 /// - "Alive signal" (octopusbuilder bug fix) в delegate, не у VC
 /// - Permission requests через `OnboardingPermissionHandler` протокол
 /// - Shared `NetworkReachability` замість нового monitor щоразу
-public final class AdaptyOnboardingProvider: OnboardingProvider {
+public final class AFAdaptyOnboardingProvider: OnboardingProvider {
 
     // MARK: - Dependencies
 
